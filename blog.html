@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Prote</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fafafa;
+            position: relative;
+        }
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+        .navbar {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+            border-bottom: var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        .filter-btn {
+            border: 1px solid #e2e8f0;
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+        .blog-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .blog-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        .blog-card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+        .blog-card .card-body {
+            padding: 2rem;
+        }
+        .blog-card .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+        .blog-card:hover .card-title {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .blog-card .card-text {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        .blog-card .btn-read-more {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+        .blog-card .btn-read-more:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        .new-post-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        footer {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            background: var(--primary-gradient);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#navbarNav" data-bs-offset="100">
+    <div class="scroll-progress"></div>
+
+    <nav class="navbar navbar-expand-lg fixed-top py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html" data-aos="fade-right">Prote</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" data-aos="fade-left">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="mt-5 pt-5">
+        <section class="py-5">
+            <div class="container">
+                <h1 class="display-4 fw-bold text-center mb-5" data-aos="fade-up">Latest Blog Posts</h1>
+                
+                <!-- Filter Buttons -->
+                <div class="d-flex justify-content-center gap-3 mb-5" data-aos="fade-up">
+                    <button class="filter-btn active" data-filter="all">All Posts</button>
+                    <button class="filter-btn" data-filter="technology">Technology</button>
+                    <button class="filter-btn" data-filter="design">Design</button>
+                    <button class="filter-btn" data-filter="lifestyle">Lifestyle</button>
+                </div>
+
+                <!-- Blog Posts Grid -->
+                <div class="row g-4">
+                    <!-- Blog Post 1 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up">
+                        <article class="blog-card h-100">
+                            <div class="new-post-badge">New Post</div>
+                            <img src="images/blog1.png" class="card-img-top" alt="Blog Post 1">
+                            <div class="card-body">
+                                <h5 class="card-title">The Future of AI in Web Development</h5>
+                                <p class="card-text">Explore how artificial intelligence is revolutionizing the way we build and interact with websites...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Blog Post 2 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                        <article class="blog-card h-100">
+                            <img src="images/blog2.png" class="card-img-top" alt="Blog Post 2">
+                            <div class="card-body">
+                                <h5 class="card-title">Design Trends for 2024</h5>
+                                <p class="card-text">Discover the latest design trends that will dominate the digital landscape in the coming year...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Blog Post 3 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                        <article class="blog-card h-100">
+                            <img src="images/blog3.png" class="card-img-top" alt="Blog Post 3">
+                            <div class="card-body">
+                                <h5 class="card-title">Mastering Modern JavaScript</h5>
+                                <p class="card-text">Learn the essential concepts and best practices for writing clean, efficient JavaScript code...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Blog Post 4 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up">
+                        <article class="blog-card h-100">
+                            <img src="images/blog1.png" class="card-img-top" alt="Blog Post 1">
+                            <div class="card-body">
+                                <h5 class="card-title">Work-Life Balance for Developers</h5>
+                                <p class="card-text">Tips and strategies for maintaining a healthy balance between coding and personal life...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Blog Post 5 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                        <article class="blog-card h-100">
+                            <img src="images/blog2.png" class="card-img-top" alt="Blog Post 2">
+                            <div class="card-body">
+                                <h5 class="card-title">Mobile-First Development Guide</h5>
+                                <p class="card-text">A comprehensive guide to building responsive websites with a mobile-first approach...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Blog Post 6 -->
+                    <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                        <article class="blog-card h-100">
+                            <img src="images/blog3.png" class="card-img-top" alt="Blog Post 3">
+                            <div class="card-body">
+                                <h5 class="card-title">Productivity Tools for Developers</h5>
+                                <p class="card-text">Essential tools and extensions that can boost your productivity as a developer...</p>
+                                <a href="blog-single.html" class="btn btn-read-more">Read More</a>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-white py-5 mt-5">
+        <div class="container position-relative">
+            <div class="row g-4">
+                <div class="col-12 col-md-4 mb-4 mb-md-0" data-aos="fade-up">
+                    <h5 class="fw-bold mb-4">Stay Connected</h5>
+                    <div class="d-flex gap-3 fs-4">
+                        <a href="#" class="text-white-50"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white-50"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-white-50"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white-50"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="fw-bold mb-4">Newsletter</h5>
+                    <form class="d-flex gap-2">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button type="submit" class="btn btn-gradient">Subscribe</button>
+                    </form>
+                </div>
+                <div class="col-12 col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="fw-bold mb-4">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Terms of Service</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Scroll Progress Bar
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.querySelector('.scroll-progress');
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            scrollProgress.style.width = `${scrolled}%`;
+        });
+
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Filter Buttons
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // Add your filtering logic here
+            });
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '0.5rem 0';
+                navbar.style.background = 'var(--glass-bg)';
+            } else {
+                navbar.style.padding = '1rem 0';
+                navbar.style.background = 'transparent';
+            }
+        });
+    </script>
+</body>
+</html>
